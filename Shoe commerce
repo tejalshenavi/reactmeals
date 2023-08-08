@@ -1,0 +1,98 @@
+import React from 'react';
+import ProductList from './ProductList';
+import Cart from './Cart';
+import { CartProvider } from './CartContext';
+
+function App() {
+  return (
+    <CartProvider>
+      <div className="App">
+        <ProductList />
+        <Cart />
+      </div>
+    </CartProvider>
+  );
+}
+
+export default App;
+
+
+import React, { useContext } from 'react';
+import { CartContext } from './CartContext';
+import CartItem from './CartItem';
+
+const Cart = () => {
+  const { cartItems, total, placeOrder, cancelOrder } = useContext(CartContext);
+
+  return (
+    <div>
+      <h2>Cart</h2>
+      <ul>
+        {cartItems.map(item => (
+          <CartItem key={item.id} item={item} />
+        ))}
+      </ul>
+      <p>Total: ${total}</p>
+      <button onClick={placeOrder}>Place Order</button>
+      <button onClick={cancelOrder}>Cancel Order</button>
+    </div>
+  );
+};
+
+export default Cart;
+
+
+
+import React from 'react';
+
+const CartItem = ({ item }) => {
+  return (
+    <li>
+      <h4>{item.name}</h4>
+      <p>Price: ${item.price}</p>
+      <p>Quantity: {item.quantity}</p>
+    </li>
+  );
+};
+
+export default CartItem;
+
+
+import React, { createContext, useState } from 'react';
+
+export const CartContext = createContext();
+
+export const CartProvider = ({ children }) => {
+  const [cartItems, setCartItems] = useState([]);
+  const [total, setTotal] = useState(0);
+
+  const addToCart = product => {
+    const existingItem = cartItems.find(item => item.id === product.id);
+    if (existingItem) {
+      existingItem.quantity++;
+    } else {
+      setCartItems([...cartItems, { ...product, quantity: 1 }]);
+    }
+    setTotal(total + product.price);
+  };
+
+  const placeOrder = () => {
+    // Logic for placing the order
+    setCartItems([]);
+    setTotal(0);
+  };
+
+  const cancelOrder = () => {
+    setCartItems([]);
+    setTotal(0);
+  };
+
+  return (
+    <CartContext.Provider value={{ cartItems, total, addToCart, placeOrder, cancelOrder }}>
+      {children}
+    </CartContext.Provider>
+  );
+};
+
+
+
