@@ -95,4 +95,34 @@ export const CartProvider = ({ children }) => {
 };
 
 
+import React, { useContext } from 'react';
+import { CartContext } from './CartContext';
+
+const ProductList = () => {
+  const { addToCart } = useContext(CartContext);
+
+  const products = [
+    { id: 1, name: 'Shoe 1', description: 'Description for Shoe 1', price: 50, sizes: ['L', 'M', 'S'] },
+    { id: 2, name: 'Shoe 2', description: 'Description for Shoe 2', price: 65, sizes: ['M', 'S'] },
+    { id: 3, name: 'Shoe 3', description: 'Description for Shoe 3', price: 75, sizes: ['L', 'M'] },
+  ];
+
+  return (
+    <div>
+      <h2>Available Products</h2>
+      <ul>
+        {products.map(product => (
+          <li key={product.id}>
+            <h3>{product.name}</h3>
+            <p>{product.description}</p>
+            <p>Price: ${product.price}</p>
+            <button onClick={() => addToCart(product)}>Add to Cart</button>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+};
+
+export default ProductList;
 
